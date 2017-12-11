@@ -1,11 +1,13 @@
+from __future__ import absolute_import
+
 from sqlalchemy.orm.properties import ColumnProperty
 from sqlalchemy.sql import expression, not_
 from sqlalchemy.sql.expression import ColumnClause, literal
 from sqlalchemy.types import UserDefinedType
 from sqlalchemy.ext.compiler import compiles
 
-from utils import from_wkt
-from functions import functions, _get_function, BaseFunction
+from .utils import from_wkt
+from .functions import functions, _get_function, BaseFunction
 
 # Base classes for geoalchemy
 

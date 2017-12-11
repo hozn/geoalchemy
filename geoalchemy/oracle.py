@@ -93,7 +93,7 @@ def ST_GeometryFunction(function, returns_geometry = False, relation_function = 
                 params.pop(0)
                 return func.ST_GEOMETRY(geom)
             
-            elif isinstance(geom, (WKBSpatialElement, WKTSpatialElement)) and geom.geometry_type <> Geometry.name:
+            elif isinstance(geom, (WKBSpatialElement, WKTSpatialElement)) and geom.geometry_type != Geometry.name:
                 params.pop(0)
                 return getattr(func, 'ST_%s' % (geom.geometry_type))(geom)
 
@@ -530,9 +530,9 @@ class OracleSpatialDialect(SpatialDialect):
         value = self.process_wkb(value)
         wkb_element = WKBSpatialElement(value, type.srid, type.name)    
         
-        if type.kwargs.has_key("diminfo"):
+        if "diminfo" in type.kwargs:
             # also set the DIMINFO data so that in can be used in function calls, see DimInfoFunction()
-            if not type.kwargs.has_key("diminfo_sql"):
+            if "diminfo_sql" not in type.kwargs:
                 # cache the SQLAlchemy text literal
                 type.kwargs["diminfo_sql"] = text(type.kwargs["diminfo"])
             wkb_element.DIMINFO = type.kwargs["diminfo_sql"]
@@ -574,7 +574,7 @@ class OracleSpatialDialect(SpatialDialect):
         bind.execute("DELETE FROM USER_SDO_GEOM_METADATA WHERE table_name = '%s' AND column_name = '%s'" %
                             (table.name.upper(), column.name.upper()))
         
-        if column.type.spatial_index and column.type.kwargs.has_key("diminfo"):
+        if column.type.spatial_index and "diminfo" in column.type.kwargs:
             bind.execute("DROP INDEX %s_%s_sidx" % (table.name, column.name))
           
     def handle_ddl_after_create(self, bind, table, column):    
@@ -585,7 +585,7 @@ class OracleSpatialDialect(SpatialDialect):
             bind.execute("ALTER TABLE %s MODIFY %s NOT NULL" % (table.name, column.name))
         
 
-        if not column.type.kwargs.has_key("diminfo"):
+        if "diminfo" not in column.type.kwargs:
             warnings.warn("No DIMINFO given for '%s.%s', no entry in USER_SDO_GEOM_METADATA will be made "\
                     "and no spatial index will be created." % (table.name, column.name), 
                     exc.SAWarning, stacklevel=3)
