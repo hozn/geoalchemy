@@ -58,7 +58,7 @@ class WKTSpatialElement(SpatialElement, expression.Function):
     """
     
     def __init__(self, desc, srid=4326, geometry_type='GEOMETRY'):
-        assert isinstance(desc, basestring)
+        assert isinstance(desc, str)
         self.desc = desc
         self.srid = srid
         self.geometry_type = geometry_type
@@ -87,7 +87,7 @@ class WKBSpatialElement(SpatialElement, expression.Function):
     """
     
     def __init__(self, desc, srid=4326, geometry_type='GEOMETRY'):
-        assert isinstance(desc, (basestring, buffer))
+        assert isinstance(desc, str)
         self.desc = desc
         self.srid = srid
         self.geometry_type = geometry_type
@@ -203,7 +203,7 @@ def _to_gis(value, srid_db):
         if isinstance(value.desc, (WKBSpatialElement, WKTSpatialElement)):
             return _check_srid(value.desc, srid_db)
         return _check_srid(value, srid_db)
-    elif isinstance(value, basestring):
+    elif isinstance(value, str):
         return _check_srid(WKTSpatialElement(value), srid_db)
     elif isinstance(value, expression.ClauseElement):
         return value
